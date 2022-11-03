@@ -5,7 +5,8 @@
         <div class="avatar avatar--small">
           <img src="https://randomuser.me/api/portraits/women/11.jpg" />
         </div>
-        <span>@{{event.host.username}}</span>
+        {{event.host.first_name}} {{event.host.last_name}}
+        @{{event.host.username}}
       </a>
       <div class="roomListRoom__actions">
         <span>{{event.created|timesince}} ago</span>

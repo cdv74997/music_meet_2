@@ -1,7 +1,11 @@
+<!-- For the events feed on the homepage -->
+
 {% load static %}
 {% for event in events %}
 <div class="roomListRoom">
     <div class="roomListRoom__header">
+
+      <!-- Event host username + their profile picture/avatar -->
       <a href="{% url 'user-profile' event.host.id %}" class="roomListRoom__author">
         <div class="avatar avatar--small">
           <img src="{{event.host.avatar.url}}" />
@@ -9,11 +13,23 @@
         <span>@{{event.host.username}}</span>
       </a>
       <div class="roomListRoom__actions">
+        <!-- When they posted the event -->
         <span>{{event.created|timesince}} ago</span>
       </div>
     </div>
     <div class="roomListRoom__content">
+
+      <!-- Name of event -->
       <a href="{% url 'event' event.id %}">{{event.name}}</a>
+
+      <!-- Description of event -->
+      <div class="room__details">
+        <p class="trunc-desc">{{event.description}}</p>
+        <a href="{% url 'event' event.id %}">more</a>
+      </div> 
+      <br>
+
+      <!-- Display flyer (or the default/sample flyer if they didn't upload one)-->
       {% if event.flier %}
         <img src="{{event.flier.url}}" alt="sample flyer">
       {% else %}

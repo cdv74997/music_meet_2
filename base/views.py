@@ -99,6 +99,7 @@ def home(request):
         musician = request.user.musician
         genre = musician.genres
         instruments = musician.instruments
+        number_of_comments = Message.objects.count()
 
         events = Event.objects.filter(
             Q(topic__name__icontains=genre) |
@@ -157,6 +158,7 @@ def home(request):
             groups |= userGroups
 
     except AttributeError:
+        number_of_comments = Message.objects.count()
         # this is how our search is extracted from what is passed to url
         q = request.GET.get('q') if request.GET.get('q') != None else ''
         # What this is is a query for our events
@@ -208,7 +210,7 @@ def home(request):
     
 
     context = {'groups': groups, 'musicians': musicians, 'events': events, 'topics': topics,
-     'event_count': event_count, 'event_messages': event_messages}
+     'event_count': event_count, 'event_messages': event_messages, 'comments': number_of_comments}
     return render(request, 'base/home.html', context)
 # later on pk will be used as the primary key to query the
 # database
@@ -260,8 +262,10 @@ def event(request, pk):
         event.participants.add(request.user)
         return redirect('event', pk=event.id)
 
-    context = {'event': event, 'event_messages': event_messages, 
-    'participants': participants}
+    context = {
+        'event': event, 
+        'event_messages': event_messages, 
+        'participants': participants}
     return render(request, 'base/event.html', context)
 
 def userProfile(request, pk):

@@ -11,7 +11,7 @@ ACCOUNT_TYPES = (
 
 class User(AbstractUser):
     
-    username = models.CharField(max_length=100, null=False)
+    username = models.CharField(unique=True, max_length=100, null=False)
     first_name = models.CharField(max_length=200, null=True)
     last_name = models.CharField(max_length=200, null=True)
     account_type = models.CharField(default='M', max_length = 10, choices = ACCOUNT_TYPES)
@@ -23,7 +23,7 @@ class User(AbstractUser):
 
     avatar = models.ImageField(null=True, default="avatar.svg")
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username'] 
 
 
 class Topic(models.Model):

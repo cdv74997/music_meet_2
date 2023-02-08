@@ -23,4 +23,5 @@ urlpatterns = [
     path('topics/', views.topicsPage, name='topics'),
     path('activity/', views.activityPage, name='activity'),
     path('search-musicians/', views.searchMusician, name='search-musicians'),
+    path('edit-register/<str:pk>/', views.editRegisterPage, name='edit-register'),
 ]

@@ -55,6 +55,31 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 
+def editRegisterPage(request, pk):
+    user = User.objects.get(id=pk)
+    form = MyUserCreationForm(instance=user)
+
+    if request.method == 'POST':
+        form = MyUserCreationForm(request.POST, instance=user)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            account_type = user.account_type
+            user.username = user.username.lower()
+
+            user.save()
+            login(request, user)
+            if (account_type == 'M'):
+                return redirect('create-musician')
+            elif (account_type == 'G'):
+                return redirect('create-group')
+            else:
+                return redirect('home')
+        else:
+            messages.error(request, 'An error occurred during registration')
+    return render(request, 'base/login_register.html', {'form': form})
+
+
 def registerPage(request):
     #page = 'register'
     
@@ -378,7 +403,7 @@ def createEvent(request):
             instruments_needed=request.POST.get('instruments_needed'),
             flier=request.FILES.get('flier'),
             description=request.POST.get('description'),
-            occurring=request.POST('occurring'),
+            occurring=request.POST.get('occurring'),
         )
         
        # form = EventForm(request.POST)

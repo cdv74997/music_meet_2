@@ -46,7 +46,7 @@ class Event(models.Model):
     #time = models.TimeField(null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-
+ 
     class Meta:
         ordering = ['-updated', '-created']
 

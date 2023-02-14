@@ -21,7 +21,7 @@
           <form class="form" action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <div class="form__group">
+            <!--<div class="form__group">
               <label for="room_topic">Enter a Topic</label>
               <input required type="text" name="topic" value="{{event.topic.name}}" list="topic-list" />
               <datalist id="topic-list">
@@ -31,44 +31,40 @@
                   {% endfor %}
                 </select>
               </datalist>
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
+              
             </div>
             
             <div class="form__group">
               <label for="room_name">Event Name</label>
               {{form.name}}
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
+             
             </div>
 
             <div class="form__group">
               <label for="room_name">Date</label>
-              {{form.occurring}}
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
+              {{form.occurring}}-
+             
             </div>
 
-            <!--<div class="form__group">
-              <label for="room_name">Time</label>
-              {{form.time}}
-              
-            </div> -->
+            
 
             <div class="form__group">
               <label for="room_name">Event Flyer</label>
               {{form.flier}}
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
+              
             </div>
 
             <div class="form__group">
               <label for="room_name">Instruments Needed</label>
               {{form.instruments_needed}}
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
+              
             </div>
 
             <div class="form__group">
               <label for="room_description">Event Description</label>
               {{form.description}}
-              <!--<input id="room_name" name="room_name" type="text" placeholder="E.g. Mastering Python + Django" />-->
-            </div>
+              
+            </div>-->
             
             <!--<div class="form__group">
               <label for="room_topic">Topic</label>
@@ -83,7 +79,16 @@
 
             </div> -->
 
+            {% for field in form %}
+            <div class="form__group form__group">
+              <label for="room_name">{{field.label}}</label>
+              {{field}}
 
+              {% for error in field.errors %}
+              <p style="color: red">{{error}}</p>
+              {% endfor %}
+            </div>
+            {% endfor %}
             
             <div class="form__action">
               <a class="btn btn--dark" href="{% url 'home' %}">Cancel</a>

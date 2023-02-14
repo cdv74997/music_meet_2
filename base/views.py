@@ -389,30 +389,39 @@ def createEvent(request):
     form = EventForm()
     topics = Topic.objects.all()
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        form = EventForm(request.POST, request.FILES)
         topic_name = request.POST.get('topic')
         topic, created = Topic.objects.get_or_create(name=topic_name)
         #event=form.save(commit=False)
         #occurring = form['occurring']
-        Event.objects.create(
-            host=request.user,
-            topic=topic,
+        if form.is_valid():
+            event = form.save(commit=False)
+            print(event.occurring)
+            Event.objects.create(
+                host=request.user,
+                topic=topic,
             #occurring=occurring,
             #time=request.POST.get('time'),
-            name=request.POST.get('name'),
-            instruments_needed=request.POST.get('instruments_needed'),
-            flier=request.FILES.get('flier'),
-            description=request.POST.get('description'),
-            occurring=request.POST.get('occurring'),
-        )
+                name=request.POST.get('name'),
+                instruments_needed=request.POST.get('instruments_needed'),
+                flier=request.FILES.get('flier'),
+                description=request.POST.get('description'),
+                occurring=event.occurring,
+        
+            )
+            return redirect('home')
+        
+        
+        
+        
         
        # form = EventForm(request.POST)
-       # if form.is_valid():
+        #if form.is_valid():
             # Step 2 in FixingEventForm 10_22_22
-           # event = form.save(commit=False)
-           # event.host = request.user
-           # event.save()
-        return redirect('home')
+            #event = form.save(commit=False)
+            #event.host = request.user
+            #event.save()
+        
     context = {'form': form, 'topics': topics}
     return render(request, 'base/event_form.html', context)
 

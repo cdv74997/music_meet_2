@@ -1,7 +1,12 @@
+<!-- For the events feed on the homepage -->
+
 {% load static %}
+{% load musicmeet_custom_tags %}
 {% for event in events %}
 <div class="roomListRoom">
     <div class="roomListRoom__header">
+
+      <!-- Event host username + their profile picture/avatar -->
       <a href="{% url 'user-profile' event.host.id %}" class="roomListRoom__author">
         <div class="avatar avatar--small">
           <img src="{{event.host.avatar.url}}" />
@@ -9,11 +14,24 @@
         <span>{{event.host.group.group_name}}</span>
       </a>
       <div class="roomListRoom__actions">
+        <!-- When they posted the event -->
         <span>{{event.created|timesince}} ago</span>
       </div>
     </div>
     <div class="roomListRoom__content">
+
+      <!-- Name of event -->
       <a href="{% url 'event' event.id %}">{{event.name}}</a>
+
+      <!-- Description of event -->
+      <div class="room__details">
+        <p class="trunc-desc">
+          {{event.description}}
+        </p>
+      </div> 
+      <br>
+
+      <!-- Display flyer (or the default/sample flyer if they didn't upload one)-->
       {% if event.flier %}
         <img src="{{event.flier.url}}" alt="sample flyer">
       {% else %}
@@ -38,7 +56,7 @@
             d="M12 16c3.859 0 7-3.141 7-7s-3.141-7-7-7c-3.859 0-7 3.141-7 7s3.141 7 7 7zM12 4c2.757 0 5 2.243 5 5s-2.243 5-5 5-5-2.243-5-5c0-2.757 2.243-5 5-5z"
           ></path>
         </svg>
-        {{event.participants.all.count}} Joined
+        {{message_dict|get_item:event}} comments
       </a>
       <p class="roomListRoom__topic">{{event.topic.name}}</p>
     </div>

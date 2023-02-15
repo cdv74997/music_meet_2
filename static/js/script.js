@@ -67,3 +67,19 @@ if (photoInput)
 // Scroll to Bottom
 const conversationThread = document.querySelector(".room__box");
 if (conversationThread) conversationThread.scrollTop = conversationThread.scrollHeight;
+
+// For truncating event descriptions
+
+function truncate(words, maxlength){
+  if(words.length <= maxlength){
+    return `${words.slice(0, maxlength)}`
+  }
+  return `${words.slice(0, maxlength)} …`
+}
+
+var allEventDescriptions = document.getElementsByClassName("trunc-desc");
+for (var i = 0; i < allEventDescriptions.length; i++) {
+  var description = allEventDescriptions.item(i);
+  description.innerHTML = truncate(description.textContent, 100);
+}
+

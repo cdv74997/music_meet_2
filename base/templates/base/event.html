@@ -61,6 +61,9 @@
             
           
           </div>
+          <div class="room__details">
+            {{event.description}}
+          </div>
           <div class="room__hosted">
             <p>Hosted By</p>
             <a href="{% url 'user-profile' event.host.id %}" class="room__author">
@@ -70,9 +73,7 @@
               <span>{{event.host.group.group_name}}</span>
             </a>
           </div>
-          <div class="room__details">
-            {{event.description}}
-          </div> 
+          <!-- description was here --> 
           <span class="room__topics">{{event.topic}}</span>
         </div>
 

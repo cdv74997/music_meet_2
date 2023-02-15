@@ -143,3 +143,30 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+''' 
+If you're accustomed to printing debug statements but don't know how to do that with Django,
+all you need is the below LOGGING dictionary! Just follow these steps:
+
+1. In the file(s) you want to print debug statements for, include 'import logging' at the top.
+2. Put this anywhere in the file(s): 'logger = logging.getLogger('django')'.
+3. Call logger.info("Debug statement goes here!").
+
+Tip: if you want to print some actual data embedded in a string, you can use what's called an f-string.
+For example: logger.info(f"Welcome, {first_name}!")
+Don't forget that "f" before the string. Variables can go between the curly brackets.
+'''
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    }
+}

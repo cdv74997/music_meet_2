@@ -9,6 +9,10 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Event, Topic, Message, Musician, Group, User
 from .forms import EventForm, UserForm, MusicianForm, GroupForm, MyUserCreationForm
 from django.core.exceptions import ObjectDoesNotExist
+import logging
+
+logger = logging.getLogger('django')
+
 # Create your views here.
 
 #events = [
@@ -99,14 +103,15 @@ def home(request):
         musician = request.user.musician
         genre = musician.genres
         instruments = musician.instruments
-        number_of_comments = Message.objects.count()
 
+        # Retrieve all events that match the current user's genre and preferred instruments:
         events = Event.objects.filter(
             Q(topic__name__icontains=genre) |
             Q(name__icontains=genre) |
             Q(description__icontains=instruments) |
             Q(instruments_needed__icontains=instruments)
         )
+        # Retrieve all messages for the above events:
         event_messages = Message.objects.filter(Q(event__topic__name__icontains=genre))
 
         q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -158,7 +163,6 @@ def home(request):
             groups |= userGroups
 
     except AttributeError:
-        number_of_comments = Message.objects.count()
         # this is how our search is extracted from what is passed to url
         q = request.GET.get('q') if request.GET.get('q') != None else ''
         # What this is is a query for our events
@@ -199,18 +203,21 @@ def home(request):
                 Q(user=userG)
             )
             groups |= userGroups
-
-
-    
-    
     
     topics = Topic.objects.all()[0:5]
     event_count = events.count()
     # Filtering down by the event topic name
-    
 
+    messages = Message.objects.all()
+    message_dict = {}
+    for event in events:
+        message_dict[event] = len(messages.filter(event_id=event.id))
+    
+    # Create an object containing the groups object, musicians object, etc.:
     context = {'groups': groups, 'musicians': musicians, 'events': events, 'topics': topics,
-     'event_count': event_count, 'event_messages': event_messages, 'comments': number_of_comments}
+     'event_count': event_count, 'event_messages': event_messages, 'message_dict': message_dict}
+
+    # Load the base/home.html template, send the context object to the template, and output the HTML that is rendered by the template:
     return render(request, 'base/home.html', context)
 # later on pk will be used as the primary key to query the
 # database

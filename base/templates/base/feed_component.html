@@ -32,11 +32,14 @@
       <br>
 
       <!-- Display flyer (or the default/sample flyer if they didn't upload one)-->
-      {% if event.flier %}
-        <img src="{{event.flier.url}}" alt="sample flyer">
+      
+        {% if event.flier %}
+        <img src="{{event.flier.url}}" width="5rem" alt="sample flyer">
       {% else %}
         <img src="{% static 'images/flyer.png' %}">
       {% endif %}
+      
+      
       
     </div>
     <div class="roomListRoom__content">

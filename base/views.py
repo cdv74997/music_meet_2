@@ -439,17 +439,22 @@ def createEvent(request):
 @login_required(login_url='login')
 def updateEvent(request, pk):
     event = Event.objects.get(id=pk)
+    #print(event.occurring)
     form = EventForm(instance=event)
     topics = Topic.objects.all()
     if request.user != event.host:
         return HttpResponse('You are not authorized here!!')
 
     if request.method == 'POST':
-        topic_name = request.POST.get('topic')
+        eventform = form.save(commit=False)
+        topic_name = Topic.objects.get(id=request.POST.get('topic'))
+        #topic_name = request.POST.get('topic') only if form is like before
         topic, created = Topic.objects.get_or_create(name=topic_name)
         event.name = request.POST.get('name')
-        event.flier=request.FILES.get('flier')
-        event.occurring=request.POST.get('occurring')
+        event.flier = request.FILES.get('flier')
+        print(eventform.occurring_month)
+        event.occurring = eventform.occurring
+        
         event.topic = topic
         event.description = request.POST.get('description')
         

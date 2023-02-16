@@ -683,6 +683,7 @@ a {
   margin: 1rem 0;
 }
 
+
 .roomListRoom__content a {
   font-size: 2rem;
   font-weight: 500;
@@ -716,6 +717,10 @@ a {
   fill: var(--color-main);
   width: 1.6rem;
   height: 1.6rem;
+}
+
+.room_img {
+  width: 0.8rem;
 }
 
 .roomListRoom__topic {

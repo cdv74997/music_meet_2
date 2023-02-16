@@ -401,7 +401,8 @@ def createEvent(request):
     topics = Topic.objects.all()
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
-        topic_name = request.POST.get('topic')
+        topic_name = Topic.objects.get(id=request.POST.get('topic'))
+        #topic_name = request.POST.get('topic')
         topic, created = Topic.objects.get_or_create(name=topic_name)
         #event=form.save(commit=False)
         #occurring = form['occurring']
@@ -446,20 +447,23 @@ def updateEvent(request, pk):
         return HttpResponse('You are not authorized here!!')
 
     if request.method == 'POST':
-        eventform = form.save(commit=False)
+        form = EventForm(request.POST, request.FILES)
+        
         topic_name = Topic.objects.get(id=request.POST.get('topic'))
         #topic_name = request.POST.get('topic') only if form is like before
         topic, created = Topic.objects.get_or_create(name=topic_name)
-        event.name = request.POST.get('name')
-        event.flier = request.FILES.get('flier')
-        print(eventform.occurring_month)
-        event.occurring = eventform.occurring
+        if form.is_valid():
+            eventobj = form.save(commit=False)
+            event.name = request.POST.get('name')
+            event.flier = request.FILES.get('flier')
+            print(eventobj.occurring)
+            event.occurring = eventobj.occurring
         
-        event.topic = topic
-        event.description = request.POST.get('description')
+            event.topic = topic
+            event.description = request.POST.get('description')
         
-        event.save()
-        return redirect('home')
+            event.save()
+            return redirect('home')
     context = {'form': form, 'event': event, 'topics': topics}
     return render(request, 'base/event_form.html', context)
 

@@ -441,6 +441,7 @@ def createEvent(request):
 def updateEvent(request, pk):
     event = Event.objects.get(id=pk)
     #print(event.occurring)
+    oldflier = event.flier
     form = EventForm(instance=event)
     topics = Topic.objects.all()
     if request.user != event.host:
@@ -455,8 +456,14 @@ def updateEvent(request, pk):
         if form.is_valid():
             eventobj = form.save(commit=False)
             event.name = request.POST.get('name')
-            event.flier = request.FILES.get('flier')
-            print(eventobj.occurring)
+            #event.flier = request.FILES.get('flier')
+            if (eventobj.flier == "flyer.png"):
+                event.flier = oldflier
+            else:
+                event.flier = eventobj.flier
+            
+            
+            print(eventobj.flier)
             event.occurring = eventobj.occurring
         
             event.topic = topic

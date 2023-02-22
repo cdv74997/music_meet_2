@@ -139,6 +139,8 @@ def home(request):
         # Retrieve all messages for the above events:
         event_messages = Message.objects.filter(Q(event__topic__name__icontains=genre))
 
+        # HttpRequest.GET = method (GET or POST). A dictionary-like object containing all given HTTP GET parameters. Returns QueryDict.
+        # QueryDict.get(key) = returns value given key.
         q = request.GET.get('q') if request.GET.get('q') != None else ''
         if request.GET.get('q') != None: 
             events = Event.objects.filter(
@@ -240,7 +242,8 @@ def home(request):
     
     # Create an object containing the groups object, musicians object, etc.:
     context = {'groups': groups, 'musicians': musicians, 'events': events, 'topics': topics,
-     'event_count': event_count, 'event_messages': event_messages, 'message_dict': message_dict}
+     'event_count': event_count, 'event_messages': event_messages, 'message_dict': message_dict,
+     'q': q}
 
     # Load the base/home.html template, send the context object to the template, and output the HTML that is rendered by the template:
     return render(request, 'base/home.html', context)

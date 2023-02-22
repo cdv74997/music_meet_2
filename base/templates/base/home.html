@@ -30,7 +30,15 @@
           <div class="roomList__header">
             <div>
               <h2>Events</h2>
-              <p>{{event_count}} Events available</p>
+              {% if not q %} <!-- If the user didn't make a search query, print number of events -->
+                <p>{{event_count}} Events available</p>
+              {% else %} <!-- Otherwise, tell them how many results there were for their query -->
+                {% if event_count == 1 %}
+                  <p>{{event_count}} result for "{{q}}"</p>
+                {% else %}
+                  <p>{{event_count}} results for "{{q}}"</p>
+                {% endif %}
+              {% endif %}
             </div>
               
              <!-- Only music groups can create events -->

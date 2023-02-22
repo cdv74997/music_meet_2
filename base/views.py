@@ -128,8 +128,11 @@ def registerPage(request):
 def groupEvents(request):
     group = request.user.group
     events = Event.objects.filter(host=request.user).order_by("occurring")
-
-    context = {'events': events}
+    messages = Message.objects.all()
+    message_dict = {}
+    for event in events:
+        message_dict[event] = len(messages.filter(event_id=event.id))
+    context = {'events': events, 'messages': messages, 'message_dict': message_dict}
 
     return render(request, 'base/home.html', context)
 

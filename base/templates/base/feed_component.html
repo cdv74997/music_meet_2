@@ -63,6 +63,11 @@
           ></path>
         </svg>
         
+        {% if message_dict|get_item:event == 1 %}
+          {{message_dict|get_item:event}} comment
+        {% else %}
+          {{message_dict|get_item:event}} comments
+        {% endif %}
       </a>
       <p class="roomListRoom__topic">{{event.topic.name}}</p>
     </div>

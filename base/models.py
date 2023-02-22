@@ -48,6 +48,7 @@ class Event(models.Model):
     created = models.DateTimeField(auto_now_add=True)
  
     class Meta:
+        # this is default for main view but group view should order by occurring
         ordering = ['-updated', '-created']
 
     def __str__(self):

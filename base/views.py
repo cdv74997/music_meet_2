@@ -10,6 +10,8 @@ from .models import Event, Topic, Message, Musician, Group, User
 from .forms import EventForm, UserForm, MusicianForm, GroupForm, MyUserCreationForm
 from django.core.exceptions import ObjectDoesNotExist
 import logging
+import datetime
+
 
 logger = logging.getLogger('django')
 
@@ -123,6 +125,16 @@ def registerPage(request):
 
     return render(request, 'base/login_register.html', {'form': form})
 
+def groupEvents(request):
+    group = request.user.group
+    events = Event.objects.filter(host=request.user).order_by("occurring")
+
+    context = {'events': events}
+
+    return render(request, 'base/home.html', context)
+
+
+
 def home(request):
     try:
         musician = request.user.musician
@@ -131,10 +143,11 @@ def home(request):
 
         # Retrieve all events that match the current user's genre and preferred instruments:
         events = Event.objects.filter(
-            Q(topic__name__icontains=genre) |
+            (Q(topic__name__icontains=genre) |
             Q(name__icontains=genre) |
             Q(description__icontains=instruments) |
-            Q(instruments_needed__icontains=instruments)
+            Q(instruments_needed__icontains=instruments)) & 
+            Q(occurring__gte=datetime.date.today())
         )
         # Retrieve all messages for the above events:
         event_messages = Message.objects.filter(Q(event__topic__name__icontains=genre))
@@ -142,9 +155,9 @@ def home(request):
         q = request.GET.get('q') if request.GET.get('q') != None else ''
         if request.GET.get('q') != None: 
             events = Event.objects.filter(
-            Q(topic__name__icontains=q) |
+            (Q(topic__name__icontains=q) |
             Q(name__icontains=q) |
-            Q(description__icontains=q)
+            Q(description__icontains=q)) & Q(occurring__gte=datetime.date.today())
             )
             event_messages = Message.objects.filter(Q(event__topic__name__icontains=q))
         
@@ -192,9 +205,9 @@ def home(request):
         q = request.GET.get('q') if request.GET.get('q') != None else ''
         # What this is is a query for our events
         events = Event.objects.filter(
-            Q(topic__name__icontains=q) |
+            (Q(topic__name__icontains=q) |
             Q(name__icontains=q) |
-            Q(description__icontains=q)
+            Q(description__icontains=q)) & Q(occurring__gte=datetime.date.today())
         )
         event_messages = Message.objects.filter(Q(event__topic__name__icontains=q))
 

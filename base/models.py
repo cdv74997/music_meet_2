@@ -46,6 +46,7 @@ class Event(models.Model):
     #time = models.TimeField(null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    location = models.CharField(max_length = 50)
  
     class Meta:
         # this is default for main view but group view should order by occurring
@@ -65,7 +66,7 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['-updated', '-created']
-    
+
 
 
     def __str__(self):

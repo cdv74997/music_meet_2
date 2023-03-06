@@ -142,11 +142,12 @@ def groupEvents(request):
 def home(request):
     groups, musicians, events, topics, event_count, event_messages, message_dict, q = searchEvents(request)
     custom_range, events, paginator = paginateEvents(request, events, 2)
+    eventsearching = "yes"
     
     # Create an object containing the groups object, musicians object, etc.:
     context = {'groups': groups, 'musicians': musicians, 'events': events, 'topics': topics,
      'event_count': event_count, 'event_messages': event_messages, 'message_dict': message_dict,
-     'q': q, 'paginator': paginator, 'custom_range': custom_range}
+     'q': q, 'paginator': paginator, 'custom_range': custom_range, 'eventsearching': eventsearching}
 
     # Load the base/home.html template, send the context object to the template, and output the HTML that is rendered by the template:
     return render(request, 'base/home.html', context)
@@ -174,9 +175,39 @@ def searchMusician(request):
         #for userMusician in userMusicians:
         musicians |= userMusicians
     
+    eventsearching = ""
 
     topics = Topic.objects.all()[0:5]
-    context = {'musicians': musicians, 'topics': topics}
+    context = {'musicians': musicians, 'topics': topics, 'eventsearching': eventsearching}
+    return render(request, 'base/home.html', context)
+
+def searchGroup(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    groups = Group.objects.filter(
+        #User__matches=User.objects.get(first_name__icontains=q) |
+        #User__matches=User.objects.get(last_name__icontains=q) |
+        #Q(User__matches=User.objects.get(first_name__icontains=q)) |
+        #Q(User__matches=User.objects.get(last_name__icontains=q)) |
+        Q(group_name__icontains=q) |
+        Q(genre__icontains=q) |
+        Q(location__icontains=q)
+    )
+    users = User.objects.filter(
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q)
+    ) 
+    for user in users:
+        userGroups = Group.objects.filter(
+            Q(user=user)
+        )
+        #for userMusician in userMusicians:
+        groups |= userGroups
+    
+    eventsearching = ""
+    groupsearching = "yes"
+
+    topics = Topic.objects.all()[0:5]
+    context = {'topics': topics, 'eventsearching': eventsearching, 'groupsearching': groupsearching, 'groups': groups}
     return render(request, 'base/home.html', context)
 def event(request, pk):
     #event = None
@@ -199,11 +230,13 @@ def event(request, pk):
         )
         event.participants.add(request.user)
         return redirect('event', pk=event.id)
+    
 
     context = {
         'event': event, 
         'event_messages': event_messages, 
-        'participants': participants}
+        'participants': participants,
+        }
     return render(request, 'base/event.html', context)
 
 def userProfile(request, pk):

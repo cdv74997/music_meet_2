@@ -2,7 +2,15 @@ from .models import Event, Musician, Group, Topic, Message, User
 from django.db.models import Q 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import datetime
+import ssl
 
+ssl._create_default_https_context = ssl._create_unverified_context
+
+import pgeocode
+#Calculated distances based on US zip codes
+dist = pgeocode.GeoDistance('US')
+
+#Seperates events into page numbers
 def paginateEvents(request, events, results):
 
     page = request.GET.get('page')
@@ -27,13 +35,25 @@ def paginateEvents(request, events, results):
     custom_range = range(leftIndex, rightIndex + 1)
     return custom_range, events, paginator
 
+
+def calcDistance(musZip,groupZip,maxDistance):
+        #distance in kms
+        kms = dist.query_postal_code(musZip, groupZip)
+
+        #Convert distance to miles
+        distance = kms * .621371
+
+        if distance < maxDistance:
+            return True
+
+
 def searchEvents(request):
     try:
         musician = request.user.musician
         genre = musician.genres
         instruments = musician.instruments
-        maxDistance = []## To be implemented
         musicianZip = musician.location
+        maxDistance = 50
 
         # Retrieve all events that match the current user's genre and preferred instruments:
         events = Event.objects.filter(
@@ -44,14 +64,16 @@ def searchEvents(request):
             Q(occurring__gte=datetime.date.today())
         )
 
-        filteredEvents = []
+        #Events filtered by distance
+        disfilteredEvents = []
 
+        # #Filer events based on their distance from the musician
         for event in events:
             eventZip = event.location
-            #if (calcDistance(maxDistance, musicianZip, eventZip) != None):
-                #filteredEvents.append(event)
+            if (calcDistance(musicianZip, eventZip, maxDistance)):
+                disfilteredEvents.append(event)
 
-        events = filteredEvents
+        events = disfilteredEvents
 
 
         # Retrieve all messages for the above events:

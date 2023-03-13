@@ -4,6 +4,7 @@ from django import forms
 #from django.contrib.auth.models import User
 import uuid
 
+
 ACCOUNT_TYPES = (
     ('M', 'Musician'),
     ('G', 'Group'),
@@ -113,6 +114,8 @@ class Group(models.Model):
 
     #location, charfield, max length of 30
     location = models.CharField(max_length = 30)
+
+    featured_image = models.ImageField(null=True, default="avatar.svg")
     
 
 class Contract(models.Model):
@@ -131,3 +134,5 @@ class Contract(models.Model):
 
     def __str__(self):
          return self.musician.user.first_name + "'s Contract"
+
+

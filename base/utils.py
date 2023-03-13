@@ -49,7 +49,8 @@ def searchEvents(request):
         for event in events:
             eventZip = event.location
             #if (calcDistance(maxDistance, musicianZip, eventZip) != None):
-                #filteredEvents.append(event)
+            #if ((musicianZip - eventZip) )
+            filteredEvents.append(event)
 
         events = filteredEvents
 
@@ -90,7 +91,7 @@ def searchEvents(request):
             )
         #for userMusician in userMusicians:
             musicians |= userMusicians
-
+        now = datetime.date.today()
         groups = Group.objects.filter(
             Q(group_name__icontains=q) |
             Q(genre__icontains=q) |
@@ -117,7 +118,7 @@ def searchEvents(request):
             Q(description__icontains=q)) & Q(occurring__gte=datetime.date.today())
         )
         event_messages = Message.objects.filter(Q(event__topic__name__icontains=q))
-
+        now = datetime.date.today()
         musicians = Musician.objects.filter(
             Q(instruments__icontains=q) |
             Q(genres__icontains=q) |
@@ -158,5 +159,5 @@ def searchEvents(request):
     for event in events:
         message_dict[event] = len(messages.filter(event_id=event.id))
     
-    return groups, musicians, events, topics, event_count, event_messages, message_dict, q
+    return groups, musicians, events, topics, event_count, event_messages, message_dict, q, now
 

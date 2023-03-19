@@ -7,18 +7,21 @@
         <div class="avatar avatar--small">
           <img src="{{group.user.avatar.url}}" />
         </div>
-        <span>{{group.group_name}}</span>
-      </a>
+        <div style="text-align: right;" class="roomListRoom__content">
+      <a href="#">{{group.group_name}}</a>
+      
+       
+     
+    </div>
+      
       <div class="roomListRoom__actions">
         <span>{{group.genre}}</span>
       </div>
     </div>
-    <div class="roomListRoom__content">
-      <a href="#">{{group.group_name}}</a>
-      
-        <img src="{{group.user.avatar.url}}">
-     
-    </div>
+    {% if request.user.id != group.user.id %}
+              <a href="{% url 'create-message' group.id %}" class="btn btn--sub btn--lg">Send Message </a>
+    {% endif %}
+    
     
 </div>
 {% endfor %}

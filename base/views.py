@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from .utils import searchEvents, paginateEvents
 #from django.contrib.auth.forms import UserCreationForm
 from .models import Event, Topic, Message, Musician, Group, User
-from .forms import EventForm, UserForm, MusicianForm, GroupForm, MyUserCreationForm
+from .forms import EventForm, UserForm, MusicianForm, GroupForm, MyUserCreationForm, MessageForm
 from django.core.exceptions import ObjectDoesNotExist
 import logging
 import datetime
@@ -181,6 +181,28 @@ def searchMusician(request):
     context = {'musicians': musicians, 'topics': topics, 'eventsearching': eventsearching}
     return render(request, 'base/home.html', context)
 
+def searchMusician(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    # instruments, genres, experience, location
+    musicians = Musician.objects.filter(
+        Q(instruments__icontains=q) |
+        Q(genres__icontains=q) |
+        Q(experience__icontains=q) |
+        Q(location__icontaoins=q)
+    )
+    users = User.objects.filter(
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q)
+    )
+    for user in users:
+        userMusicians = Musician.objects.filter(
+            Q(user=user)
+        )
+        musicians |= musicianGroups
+    musiciansearching = "yes"
+    topics = Topic.objects.all()[0:5]
+    context = {'topics': topics, 'musiciansearching': musiciansearching, 'musicians': musician}
+    return render(request, 'base/home.html', context)
 def searchGroup(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     groups = Group.objects.filter(
@@ -477,4 +499,30 @@ def topicsPage(request):
 def activityPage(request):
     event_messages = Message.objects.all()
     return render(request, 'base/activity.html', {'event_messages' : event_messages})
+
+def createMessage(request, pk):
+    recipient = User.objects.get(id=pk)
+    form = MessageForm()
+    try:
+        sender = request.user
+    except:
+        sender = None
+
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = sender
+            message.recipient = recipient
+
+            if sender:
+                message.name = sender.name
+                message.email = sender.email
+
+            message.save()
+
+            messages.success(request, 'Your message was successfully sent!')
+            return redirect('user-profile', pk=recipient.id)
+    context = {'recipient': recipient, 'form': form}
+    return render(request, 'base/message_form.html', context)
 

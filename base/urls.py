@@ -26,4 +26,5 @@ urlpatterns = [
     path('edit-register/<str:pk>/', views.editRegisterPage, name='edit-register'),
     path('group-event/', views.groupEvents, name='group-event'),
     path('search-group/', views.searchGroup, name='search-group'),
+    path('send-message/<str:pk>/', views.createMessage, name="create-message")
 ]

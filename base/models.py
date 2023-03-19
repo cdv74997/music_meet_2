@@ -86,7 +86,7 @@ class Musician(models.Model):
     #uname = models.CharField(max_length = 60, primary_key = True) #fk???
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     # instruments, charfield, max length of 200
-    instruments = models.CharField(max_length = 200)
+    instruments = models.CharField(max_length = 200) 
 
     # genres, charfield, max length of 200
     genres = models.CharField(max_length = 200)
@@ -134,5 +134,44 @@ class Contract(models.Model):
 
     def __str__(self):
          return self.musician.user.first_name + "'s Contract"
+
+class Review(models.Model):
+    VOTE_TYPE = (
+        ('one', 'One Star'),
+        ('two', 'Two Stars'),
+        ('three', 'Three Stars'),
+        ('four', 'Four Stars'),
+        ('five', 'Five Stars')
+    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    body = models.TextField(null=True, blank=True)
+    value = models.CharField(max_length=200, choices=VOTE_TYPE)
+    created = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+
+    class Meta:
+        unique_together = [['owner', 'event']]
+
+    def __str__(self):
+        return self.value
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    recipient = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="messages")
+    name = models.CharField(max_length=200, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)
+    subject = models.CharField(max_length=200, null=True, blank=True)
+    body = models.TextField()
+    is_read = models.BooleanField(default=False, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        ordering = ['is_read', '-created']
+
 
 
